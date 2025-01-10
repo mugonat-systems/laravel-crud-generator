@@ -481,7 +481,7 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
                 $rulesArray[$column['name']][] = 'string';
             }
 
-            if ($column['name'] == app($modelName)->getDeletedAtColumn()) {
+            if ($column['name'] == app($this->getModelClass())->getDeletedAtColumn()) {
                 $softDeletesNamespace = "use Illuminate\Database\Eloquent\SoftDeletes;\n";
                 $softDeletes = "use SoftDeletes;\n";
             }
@@ -541,6 +541,11 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
     protected function getModelInput(): string
     {
         return $this->option('model') ??  $this->buildClassName();
+    }
+
+    protected function getModelClass(): string
+    {
+        return $this->modelNamespace.'\\'.$this->getModelInput();
     }
 
     /**
