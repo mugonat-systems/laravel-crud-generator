@@ -1,6 +1,6 @@
 <?php
 
-namespace Ibex\CrudGenerator;
+namespace Mugonat\CrudGenerator;
 
 use Mugonat\CrudGenerator\Commands\CrudGenerator;
 use Illuminate\Support\ServiceProvider;
