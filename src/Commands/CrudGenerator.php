@@ -53,7 +53,9 @@ class CrudGenerator extends GeneratorCommand
         }
 
         // Build the class name from table name
-        $this->name = $this->getModelInput();
+        $name = str($this->getModelInput())->explode('\\');
+        $this->name = $name->last();
+        $this->modelNamespace = $name->count() > 1 ? $name->implode('\\') : null;
 
         // Generate the crud
         $this->buildOptions()
