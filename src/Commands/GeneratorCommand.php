@@ -481,7 +481,7 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
                 $rulesArray[$column['name']][] = 'string';
             }
 
-            if ($column['name'] == 'deleted_at') {
+            if ($column['name'] == app($modelName)->getDeletedAtColumn()) {
                 $softDeletesNamespace = "use Illuminate\Database\Eloquent\SoftDeletes;\n";
                 $softDeletes = "use SoftDeletes;\n";
             }
