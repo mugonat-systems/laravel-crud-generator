@@ -46,7 +46,7 @@ class CrudGenerator extends GeneratorCommand
         $this->table = $this->getNameInput();
 
         // If table not exist in DB return
-        if (! $this->tableExists()) {
+        if (!$this->tableExists()) {
             $this->error("`$this->table` table not exist");
 
             return false;
@@ -55,7 +55,7 @@ class CrudGenerator extends GeneratorCommand
         // Build the class name from table name
         $name = str($this->getModelInput())->explode('\\');
         $this->name = $name->last();
-        $this->modelNamespace = $name->count() > 1 ? $name->implode('\\') : null;
+        $this->modelNamespace = $name->count() > 1 ? $name->slice(0, -1)->implode('\\') : $this->modelNamespace;
 
         // Generate the crud
         $this->buildOptions()
@@ -112,15 +112,15 @@ class CrudGenerator extends GeneratorCommand
                 "Route::get('/{$this->_getRoute()}/update/{{$replacements['{{modelNameLowerCase}}']}}', \\$this->livewireNamespace\\{$replacements['{{modelNamePluralUpperCase}}']}\Edit::class)->name('{$this->_getRoute()}.edit');",
             ],
             'api' => [
-                "Route::apiResource('".$this->_getRoute()."', {$this->name}Controller::class);",
+                "Route::apiResource('" . $this->_getRoute() . "', {$this->name}Controller::class);",
             ],
             default => [
-                "Route::resource('".$this->_getRoute()."', {$this->name}Controller::class);",
+                "Route::resource('" . $this->_getRoute() . "', {$this->name}Controller::class);",
             ]
         };
 
         foreach ($lines as $line) {
-            $this->info('<bg=blue;fg=white>'.$line.'</>');
+            $this->info('<bg=blue;fg=white>' . $line . '</>');
         }
 
         $this->info('');
@@ -160,7 +160,7 @@ class CrudGenerator extends GeneratorCommand
         };
 
         $controllerTemplate = str_replace(
-            array_keys($replace), array_values($replace), $this->getStub($stubFolder.'Controller')
+            array_keys($replace), array_values($replace), $this->getStub($stubFolder . 'Controller')
         );
 
         $this->write($controllerPath, $controllerTemplate);
@@ -169,7 +169,7 @@ class CrudGenerator extends GeneratorCommand
             $resourcePath = $this->_getResourcePath($this->name);
 
             $resourceTemplate = str_replace(
-                array_keys($replace), array_values($replace), $this->getStub($stubFolder.'Resource')
+                array_keys($replace), array_values($replace), $this->getStub($stubFolder . 'Resource')
             );
 
             $this->write($resourcePath, $resourceTemplate);
@@ -186,17 +186,17 @@ class CrudGenerator extends GeneratorCommand
         $replace = array_merge($this->buildReplacements(), $this->modelReplacements());
 
         foreach (['Index', 'Show', 'Edit', 'Create'] as $component) {
-            $componentPath = $this->_getLivewirePath($folder.'/'.$component);
+            $componentPath = $this->_getLivewirePath($folder . '/' . $component);
 
             $componentTemplate = str_replace(
-                array_keys($replace), array_values($replace), $this->getStub('livewire/'.$component)
+                array_keys($replace), array_values($replace), $this->getStub('livewire/' . $component)
             );
 
             $this->write($componentPath, $componentTemplate);
         }
 
         // Form
-        $formPath = $this->_getLivewirePath('Forms/'.$this->name.'Form');
+        $formPath = $this->_getLivewirePath('Forms/' . $this->name . 'Form');
 
         $componentTemplate = str_replace(
             array_keys($replace), array_values($replace), $this->getStub('livewire/Form')
@@ -212,33 +212,37 @@ class CrudGenerator extends GeneratorCommand
      */
     protected function buildModel(): static
     {
+        // Make Request Class
         $modelPath = $this->_getModelPath($this->name);
 
-        if ($this->files->exists($modelPath) && $this->ask('Already exist Model. Do you want overwrite (y/n)?', 'y') == 'n') {
-            return $this;
+        if (!$this->files->exists($modelPath) || $this->ask('Already exist Model. Do you want overwrite (y/n)?', 'y') != 'n') {
+            $this->info('Creating Model ...');
+
+            // Make the models attributes and replacement
+            $replace = array_merge($this->buildReplacements(), $this->modelReplacements());
+
+            $modelTemplate = str_replace(
+                array_keys($replace), array_values($replace), $this->getStub('Model')
+            );
+
+            $this->write($modelPath, $modelTemplate);
         }
-
-        $this->info('Creating Model ...');
-
-        // Make the models attributes and replacement
-        $replace = array_merge($this->buildReplacements(), $this->modelReplacements());
-
-        $modelTemplate = str_replace(
-            array_keys($replace), array_values($replace), $this->getStub('Model')
-        );
-
-        $this->write($modelPath, $modelTemplate);
 
         // Make Request Class
         $requestPath = $this->_getRequestPath($this->name);
 
-        $this->info('Creating Request Class ...');
+        if (!$this->files->exists($requestPath) || $this->ask('Already exist Request Class. Do you want overwrite (y/n)?', 'y') != 'n') {
+            $this->info('Creating Request Class ...');
 
-        $requestTemplate = str_replace(
-            array_keys($replace), array_values($replace), $this->getStub('Request')
-        );
+            // Make the models attributes and replacement
+            $replace = array_merge($this->buildReplacements(), $this->modelReplacements());
 
-        $this->write($requestPath, $requestTemplate);
+            $requestTemplate = str_replace(
+                array_keys($replace), array_values($replace), $this->getStub('Request')
+            );
+
+            $this->write($requestPath, $requestTemplate);
+        }
 
         return $this;
     }
