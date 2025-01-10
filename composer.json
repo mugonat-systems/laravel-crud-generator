@@ -1,11 +1,15 @@
 {
-    "name": "ibex/crud-generator",
+    "name": "mugonat/crud-generator",
     "description": "Laravel CRUD Generator",
     "license": "MIT",
     "authors": [
         {
             "name": "M Awais",
             "email": "asargodha@gmail.com"
+        },
+        {
+            "name": "J Charika",
+            "email": "joecharika@gmail.com"
         }
     ],
     "keywords": ["laravel", "crud", "crud generator", "laravel crud generator", "laravel package", "bootstrap css", "tailwind css", "alpine js"],
@@ -15,13 +19,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Ibex\\CrudGenerator\\": "src/"
+            "Mugonat\\CrudGenerator\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Ibex\\CrudGenerator\\CrudServiceProvider"
+                "Mugonat\\CrudGenerator\\CrudServiceProvider"
             ]
         }
     },

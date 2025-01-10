@@ -1,6 +1,6 @@
 <?php
 
-namespace Ibex\CrudGenerator\Commands;
+namespace Mugonat\CrudGenerator\Commands;
 
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -24,6 +24,7 @@ class CrudGenerator extends GeneratorCommand
     protected $signature = 'make:crud
                             {name : Table name}
                             {stack : The development stack that should be installed (bootstrap,tailwind,livewire,api)}
+                            {--model= : Custom model class}
                             {--route= : Custom route name}';
 
     /**
@@ -52,7 +53,7 @@ class CrudGenerator extends GeneratorCommand
         }
 
         // Build the class name from table name
-        $this->name = $this->_buildClassName();
+        $this->name = $this->getModelInput();
 
         // Generate the crud
         $this->buildOptions()
@@ -286,15 +287,5 @@ class CrudGenerator extends GeneratorCommand
         }
 
         return $this;
-    }
-
-    /**
-     * Make the class name from table name.
-     *
-     * @return string
-     */
-    private function _buildClassName(): string
-    {
-        return Str::studly(Str::singular($this->table));
     }
 }

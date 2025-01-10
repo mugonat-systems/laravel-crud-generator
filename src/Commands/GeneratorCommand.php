@@ -1,9 +1,9 @@
 <?php
 
-namespace Ibex\CrudGenerator\Commands;
+namespace Mugonat\CrudGenerator\Commands;
 
 use Exception;
-use Ibex\CrudGenerator\ModelGenerator;
+use Mugonat\CrudGenerator\ModelGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -536,6 +536,21 @@ abstract class GeneratorCommand extends Command implements PromptsForMissingInpu
     protected function getNameInput(): string
     {
         return trim($this->argument('name'));
+    }
+
+    protected function getModelInput(): string
+    {
+        return $this->option('model') ??  $this->buildClassName();
+    }
+
+    /**
+     * Make the class name from table name.
+     *
+     * @return string
+     */
+    protected function buildClassName(): string
+    {
+        return Str::studly(Str::singular($this->table));
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Ibex\CrudGenerator;
 
-use Ibex\CrudGenerator\Commands\CrudGenerator;
+use Mugonat\CrudGenerator\Commands\CrudGenerator;
 use Illuminate\Support\ServiceProvider;
 
 /**
